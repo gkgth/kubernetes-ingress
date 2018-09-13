@@ -177,11 +177,7 @@ func (cnf *Configurator) generateNginxCfgForMergeableIngresses(mergeableIngs *Me
 		Servers:   []Server{masterServer},
 		Upstreams: upstreams,
 		Keepalive: keepalive,
-		Ingress: Ingress{
-			Name:        mergeableIngs.Master.Ingress.Name,
-			Namespace:   mergeableIngs.Master.Ingress.Namespace,
-			Annotations: mergeableIngs.Master.Ingress.Annotations,
-		},
+		Ingress:   masterNginxCfg.Ingress,
 	}
 }
 
