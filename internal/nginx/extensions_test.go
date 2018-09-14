@@ -23,6 +23,10 @@ func TestParseLBMethod(t *testing.T) {
 		"least_time header",
 		"hash123",
 		"hash $request_id conwrongspelling",
+		"random one",
+		"random two least_time=header",
+		"random two least_time=last_byte",
+		"random two ip_hash",
 	}
 
 	for _, test := range testsWithValidInput {
@@ -69,6 +73,8 @@ func TestParseLBMethodForPlus(t *testing.T) {
 		"blabla",
 		"hash123",
 		"least_time inflight header",
+		"random one",
+		"random two ip_hash",
 	}
 
 	for _, test := range testsWithValidInput {
