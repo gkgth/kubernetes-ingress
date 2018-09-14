@@ -17,6 +17,10 @@ func ParseLBMethod(method string) (string, error) {
 		method, err := validateHashLBMethod(method)
 		return method, err
 	}
+	if strings.HasPrefix(method, "random") {
+		method, err := validateRandomLBMethod(method)
+		return method, err
+	}
 
 	if method == "least_conn" || method == "ip_hash" {
 		return method, nil
@@ -45,6 +49,10 @@ func ParseLBMethodForPlus(method string) (string, error) {
 		method, err := validateHashLBMethod(method)
 		return method, err
 	}
+	if strings.HasPrefix(method, "random") {
+		method, err := validateRandomLBMethodForPlus(method)
+		return method, err
+	}
 
 	if _, exists := nginxPlusLBValidInput[method]; exists {
 		return method, nil
@@ -56,6 +64,29 @@ func validateHashLBMethod(method string) (string, error) {
 	keyWords := strings.Split(method, " ")
 	if keyWords[0] == "hash" {
 		if len(keyWords) == 2 || len(keyWords) == 3 && keyWords[2] == "consistent" {
+			return method, nil
+		}
+	}
+	return "", fmt.Errorf("Invalid load balancing method: %q", method)
+}
+
+func validateRandomLBMethod(method string) (string, error) {
+	keyWords := strings.Split(method, " ")
+	if keyWords[0] == "random" {
+		if len(keyWords) == 1 || len(keyWords) == 2 && keyWords[1] == "two" ||
+			len(keyWords) == 3 && keyWords[1] == "two" && keyWords[2] == "least_conn" {
+			return method, nil
+		}
+	}
+	return "", fmt.Errorf("Invalid load balancing method: %q", method)
+}
+
+func validateRandomLBMethodForPlus(method string) (string, error) {
+	keyWords := strings.Split(method, " ")
+	if keyWords[0] == "random" {
+		if len(keyWords) == 1 || len(keyWords) == 2 && keyWords[1] == "two" ||
+			len(keyWords) == 3 && keyWords[1] == "two" &&
+			(keyWords[2] == "least_conn" || keyWords[2] == "least_time=header" || keyWords[2] == "least_time=last_byte") {
 			return method, nil
 		}
 	}
